@@ -2,7 +2,7 @@ fn main() {
     decode_string("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d");
 }
 
-fn decode_string(hex_string: &str) -> String {        
+pub fn decode_string(hex_string: &str) -> String {        
     split_and_strip_whitespace(hex_string)
         .chunks(2) // split up string into 2 digit parts 
         .map(|entry| entry[0].to_owned() + entry[1]) // then join these back together
@@ -32,7 +32,7 @@ fn find_base64_char(characher_to_find: &i64) -> String {
     found_character
 }
 
-fn split_and_strip_whitespace(string: &str) -> Vec<&str> {
+pub fn split_and_strip_whitespace(string: &str) -> Vec<&str> { 
     let mut f: Vec<_> = string.split("").collect();
     // for some reason it has empty strings at the beginning and end
     let mut u: Vec<_> = f.drain(1..).collect(); // removes the first empty ''
@@ -48,7 +48,6 @@ mod tests {
     fn test_conversion() {
         let hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
         let base64 = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
-
         assert_eq!(decode_string(hex), base64);
     }
 }

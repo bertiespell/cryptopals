@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "convert_hex_to_base64",
+    "XOR"
+]
