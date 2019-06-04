@@ -12,7 +12,7 @@ fn decode_string(hex_string: &str) -> String {
         .fold(String::new(), |acc, x| acc + &x.to_owned())
         .chars()
         .collect::<Vec<char>>()
-        .chunks(6) // why does windows not do what I think?!
+        .chunks(6) // Regroup binary into 6 parts for base64 encoding
         .map(|x| x.iter().collect::<String>()).collect::<Vec<String>>()
         .into_iter()
         .map(|x| i64::from_str_radix(&x, 2).unwrap()) // converts from the binary to decimal
@@ -22,12 +22,9 @@ fn decode_string(hex_string: &str) -> String {
 }
 
 fn find_base64_char(characher_to_find: &i64) -> String {
-    let base64 = String::from("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"); // we'll split on this to decode
-
-    let base64_enumerator = split_and_strip_whitespace(&base64).into_iter().enumerate();
-    
+    let base64 = String::from("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
     let mut found_character = String::new();
-    for (index, item) in base64_enumerator {
+    for (index, item) in split_and_strip_whitespace(&base64).into_iter().enumerate() {
         if index == *characher_to_find as usize {
             found_character.push_str(item);
         }
