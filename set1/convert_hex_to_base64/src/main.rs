@@ -1,19 +1,11 @@
-fn main() {
-    let hex_string = decode_string("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d");    
-}
-
-fn decode_string(hex_string: &str) -> String {    
-    let hex_string_vec = split_and_strip_whitespace(hex_string);
-
-    let binary_string = String::new();
-    
-    let numbers: Vec<_> = hex_string_vec
+fn decode_string(hex_string: &str) -> String {        
+    let base64: Vec<_> = split_and_strip_whitespace(hex_string)
         .chunks(2) // split up string into 2 digit parts 
         .map(|entry| entry[0].to_owned() + entry[1]) // then join these back together
         .map(|x| i64::from_str_radix(&x, 16).unwrap()) // not sure if this step is cheating - could try to reimplement
         .map(|x| format!("{:b}", x)) // converts to binary
         .map(|x| format!("{:0>#8}", x)) // they should be 8 bits - this adds left 0 padding to 8 characters
-        .fold(binary_string, |acc, x| acc + &x.to_owned())
+        .fold(String::new(), |acc, x| acc + &x.to_owned())
         .chars()
         .collect::<Vec<char>>()
         .chunks(6) // why does windows not do what I think?!
@@ -22,8 +14,7 @@ fn decode_string(hex_string: &str) -> String {
         .map(|x| i64::from_str_radix(&x, 2).unwrap()) // converts from the binary to decimal
         .map(|x| find_base64_char(&x))
         .collect();
-
-    numbers.join("")
+    base64.join("")
 }
 
 fn find_base64_char(characher_to_find: &i64) -> String {
@@ -47,7 +38,6 @@ fn split_and_strip_whitespace(string: &str) -> Vec<&str> {
     u.pop(); // remove '' from the end
     u
 }
-
 
 #[cfg(test)]
 mod tests {
