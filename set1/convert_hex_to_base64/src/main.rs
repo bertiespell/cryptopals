@@ -1,5 +1,9 @@
+fn main() {
+    
+}
+
 fn decode_string(hex_string: &str) -> String {        
-    let base64: Vec<_> = split_and_strip_whitespace(hex_string)
+    split_and_strip_whitespace(hex_string)
         .chunks(2) // split up string into 2 digit parts 
         .map(|entry| entry[0].to_owned() + entry[1]) // then join these back together
         .map(|x| i64::from_str_radix(&x, 16).unwrap()) // not sure if this step is cheating - could try to reimplement
@@ -13,8 +17,8 @@ fn decode_string(hex_string: &str) -> String {
         .into_iter()
         .map(|x| i64::from_str_radix(&x, 2).unwrap()) // converts from the binary to decimal
         .map(|x| find_base64_char(&x))
-        .collect();
-    base64.join("")
+        .collect::<Vec<_>>()
+        .join("")
 }
 
 fn find_base64_char(characher_to_find: &i64) -> String {
