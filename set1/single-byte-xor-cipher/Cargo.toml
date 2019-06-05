@@ -1,9 +1,8 @@
 [package]
-name = "xor"
+name = "single-byte-xor-cipher"
 version = "0.1.0"
 authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-convert_hex_to_base64 = { path = "../convert_hex_to_base64" }
-hex = "0.3.2"
+XOR = { path = "../XOR" }

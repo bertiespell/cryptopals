@@ -21,7 +21,7 @@ pub fn decode_string(hex_string: &str) -> String {
         .join("")
 }
 
-fn find_base64_char(characher_to_find: &i64) -> String {
+pub fn find_base64_char(characher_to_find: &i64) -> String {
     let base64 = String::from("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
     let mut found_character = String::new();
     for (index, item) in split_and_strip_whitespace(&base64).into_iter().enumerate() {
