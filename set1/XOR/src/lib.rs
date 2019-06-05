@@ -8,8 +8,19 @@ fn main() {
 pub fn xor<'a>(string: &'a str, xor_against: &'a str) -> String {
     let mut xored: Vec<u8> = vec!();
     let hex_iterator = hex::decode(string).unwrap().into_iter().enumerate();
+    
+    // make them the same length
+    let mut repeated_xor_against = String::from(xor_against);
+    while repeated_xor_against.len() < string.len() {
+        repeated_xor_against.push_str(xor_against);
+    }
+
+    // TODO: this works for a single charachter input, but otherwise this might made a key (repeated_xor_against) which is too long. We need to trim this to be the original length (but Rust currently complains about not knowing the size at compile-time - probably need to use a Box)
+
+    let xor_decoded = hex::decode(repeated_xor_against).unwrap(); 
+
     for (index, byte) in hex_iterator {
-        xored.push(byte^hex::decode(xor_against).unwrap()[index]);
+        xored.push(byte^xor_decoded[index]);
     }
     hex::encode(String::from_utf8(xored).unwrap())
 }
