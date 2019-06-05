@@ -1,0 +1,11 @@
+left shift multiplies a number by two, and right shift divides a number by two
+
+logical versus arithmetic right shifts (has to do with the signed bit at the beginning) (logical shifts right, with a 0, arithmetic sifts right INCLUDING the signed bit, but then also fills in the signed bit with the original (preserves the divide by 2 relationship - but rounds))
+
+masks: to find out about a particular bit (create a number that only has a bit there and anding it - this tells you about the information at that bit)
+
+setting a bit
+take the mask and then OR it with the original
+
+clearing the ith bit
+and it with a mask that has a 1 everywhere else except that one spot (invert the mask from before)
