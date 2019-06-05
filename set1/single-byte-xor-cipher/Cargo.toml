@@ -5,4 +5,4 @@ authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-XOR = { path = "../XOR" }
+xor = { path = "../xor" }
