@@ -21,7 +21,7 @@ pub mod cipher {
         })
     }
 
-    fn xor(input: Vec<u8>, key: Vec<u8>) -> Vec<u8> {
+    pub fn xor(input: Vec<u8>, key: Vec<u8>) -> Vec<u8> {
         input
             .iter()
             .zip(key.iter())
