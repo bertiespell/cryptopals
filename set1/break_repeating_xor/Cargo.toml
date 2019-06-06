@@ -1,0 +1,9 @@
+[package]
+name = "break_repeating_xor"
+version = "0.1.0"
+authors = ["Bertie <berniesnell@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+single_byte_xor_cipher = { path = "../single_byte_xor_cipher" }
+hex = "0.3.2"
