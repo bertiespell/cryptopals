@@ -19,7 +19,7 @@ pub fn xor<'a>(string: &'a str, xor_against: &'a str) -> String {
 
     let xor_decoded = hex::decode(repeated_xor_against).unwrap(); 
 
-    for (index, byte) in hex_iterator {
+    for (index, byte) in hex_iterator { // these can be zipped up together and then iterated on
         xored.push(byte^xor_decoded[index]);
     }
     hex::encode(String::from_utf8(xored).unwrap())
