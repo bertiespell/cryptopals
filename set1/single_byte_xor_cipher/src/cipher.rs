@@ -7,8 +7,12 @@ pub mod cipher {
         let decoded_hex = hex::decode(hex_string).unwrap();
         let xored_hashes = xor_against_chars(decoded_hex);
 
+        find_best(xored_hashes)
+    }
+
+    pub fn find_best(xored_hashes: HashMap<u8, Vec<u8>>) -> (i32, String, char) {
         xored_hashes.iter().fold((0, String::new(), 'a'), |acc, hash| {
-            let decoded_string = String::from_utf8(hash.1.clone()).unwrap();
+            let decoded_string = String::from_utf8(hash.1.clone()).unwrap_or(String::from("a"));
             let score = score_xored_hashes(decoded_string.as_bytes().to_vec());
             if score > acc.0 {
                 return (score, decoded_string, *hash.0 as char);
@@ -36,7 +40,7 @@ pub mod cipher {
         results
     }
 
-    fn score_xored_hashes(xored_hashes: Vec<u8>) -> i32 {
+    pub fn score_xored_hashes(xored_hashes: Vec<u8>) -> i32 {
         xored_hashes.iter().fold(0, |acc, &entry| acc + score_char(entry as char))
     }
 

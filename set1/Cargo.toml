@@ -4,5 +4,6 @@ members = [
     "convert_hex_to_base64",
     "xor",
     "test/thingy",
-    "single-byte-xor-cipher"
+    "single_byte_xor_cipher",
+    "detect_single_xor"
 ]

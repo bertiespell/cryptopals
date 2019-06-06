@@ -1,5 +1,5 @@
 [package]
-name = "single-byte-xor-cipher"
+name = "single_byte_xor_cipher"
 version = "0.1.0"
 authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
