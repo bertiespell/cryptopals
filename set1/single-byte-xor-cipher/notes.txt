@@ -1,0 +1,7 @@
+// utf8 encodes in 1 - 4 bytes, depending on the number of significant bits
+// one byte 0xxxxxxx
+// two bytes 110xxxxx 10xxxxxx
+// three bytes 1110xxxx 10xxxxxx 10xxxxxx
+// four bytes 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+
+// The first 128 characters (US-ASCII) need one byte.

@@ -3,24 +3,21 @@ extern crate hex;
 pub mod cipher {
     use std::collections::HashMap;
 
-    pub fn decrypt(hex_string: &str) {
+    pub fn decrypt(hex_string: &str) -> (i32, String, char) {
         let decoded_hex = hex::decode(hex_string).unwrap();
         let xored_hashes = xor_against_chars(decoded_hex);
 
-        let mut best_scored_value = (0, String::new());
-
-        for (key, value) in xored_hashes.iter() {
-            let decoded_string = String::from_utf8(value.clone()).unwrap();
+        xored_hashes.iter().fold((0, String::new(), 'a'), |acc, hash| {
+            let decoded_string = String::from_utf8(hash.1.clone()).unwrap();
             let score = score_xored_hashes(decoded_string.as_bytes().to_vec());
-            if score > best_scored_value.0 {
-                best_scored_value = (score, decoded_string);
+            if score > acc.0 {
+                return (score, decoded_string, *hash.0 as char);
             }
-        }
-
-        println!("Decoded string: {:?}", best_scored_value);
+            acc
+        })
     }
 
-    pub fn xor(input: Vec<u8>, key: Vec<u8>) -> Vec<u8> {
+    fn xor(input: Vec<u8>, key: Vec<u8>) -> Vec<u8> {
         input
             .iter()
             .zip(key.iter())
@@ -28,7 +25,7 @@ pub mod cipher {
             .collect()
     }
 
-    pub fn xor_against_chars(decoded_hex: Vec<u8>) -> HashMap<u8, Vec<u8>> {
+    fn xor_against_chars(decoded_hex: Vec<u8>) -> HashMap<u8, Vec<u8>> {
         let mut results = HashMap::new();
 
         for letter in 0..128 {
@@ -39,11 +36,11 @@ pub mod cipher {
         results
     }
 
-    pub fn score_xored_hashes(xored_hashes: Vec<u8>) -> i32 {
+    fn score_xored_hashes(xored_hashes: Vec<u8>) -> i32 {
         xored_hashes.iter().fold(0, |acc, &entry| acc + score_char(entry as char))
     }
 
-    pub fn score_char(test_char: char) -> i32 {
+    fn score_char(test_char: char) -> i32 {
         match test_char {
             'e' => 27,
             't' => 26,
@@ -76,3 +73,22 @@ pub mod cipher {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_conversion() {
+        let hex_encoded_string = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+        let decrypted_string = cipher::decrypt(&hex_encoded_string);
+        let actual = (
+            577,
+            String::from("Cooking MC\'s like a pound of bacon"),
+            'X'
+        );
+
+        assert_eq!(decrypted_string, actual);
+    }
+}
+
