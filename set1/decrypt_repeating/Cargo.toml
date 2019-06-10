@@ -5,8 +5,9 @@ authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-xor = { path = "../xor" }
 convert_hex_to_base64 = { path = "../convert_hex_to_base64" }
 hex = "0.3.2"
-break_repeating_xor = { path = "../break_repeating_xor" }
 single_byte_xor_cipher = { path = "../single_byte_xor_cipher" }
+
+[dependencies.xor]
+git = "https://github.com/zummenix/xor-rs/"

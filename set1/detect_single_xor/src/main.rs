@@ -8,7 +8,7 @@ fn main() {
     let data = fs::read_to_string("encrypted_strings.txt").expect("Unable to read file");
     let decrypted = data
         .lines()
-        .map(|line| decrypt(line).unwrap())
+        .map(|line| decrypt(line.as_bytes().to_vec()))
         .fold((0, String::new()), |acc, decrypted_line| {
             let score = score_xored_hashes(decrypted_line.1.as_bytes().to_vec());
             if score > acc.0 {
