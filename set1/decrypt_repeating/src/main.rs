@@ -86,7 +86,7 @@ fn chunk_text_into_bytes(text: Vec<u8>, length: i32) -> Vec<Vec<u8>> {
 }
 
 fn transpose_text(text: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
-    // TODO: this probably won't work - the length of the inner vec isn't right, other than for square matrices (currenly using the length of the first vec - hoping the cryptopals people have been kind with their examples...)
+    // TODO: this is brittle - should consider testing more edge cases
     let mut transposed_text: Vec<Vec<u8>> =
         vec![vec![u8::min_value(); text.len()]; text[0].len()];
     
