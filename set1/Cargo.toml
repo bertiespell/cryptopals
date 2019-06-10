@@ -6,5 +6,7 @@ members = [
     "test/thingy",
     "single_byte_xor_cipher",
     "detect_single_xor",
-    "repeating_xor"
+    "repeating_xor",
+    "break_repeating_xor",
+    "decrypt_repeating"
 ]

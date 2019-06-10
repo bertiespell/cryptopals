@@ -3,11 +3,20 @@ extern crate hex;
 pub mod cipher {
     use std::collections::HashMap;
 
-    pub fn decrypt(hex_string: &str) -> (i32, String, char) {
-        let decoded_hex = hex::decode(hex_string).unwrap();
-        let xored_hashes = xor_against_chars(decoded_hex);
+    pub fn decrypt(decoded_hex_string: Vec<u8>) -> (i32, String, char) {
+        // let decoded_hex = hex::decode(hex_string);
+        // match decoded_hex_string {
+           
+                
+                let xored_hashes = xor_against_chars(decoded_hex_string);
 
-        find_best(xored_hashes)
+                find_best(xored_hashes)
+            // },
+            // Err(e) => {
+            //     println!("ERROR DECODING HEX {:?}", e);
+            //     Err(String::from("Error decoding hex"))
+            // }
+        // }
     }
 
     pub fn find_best(xored_hashes: HashMap<u8, Vec<u8>>) -> (i32, String, char) {
@@ -85,7 +94,8 @@ mod tests {
     #[test]
     fn test_conversion() {
         let hex_encoded_string = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-        let decrypted_string = cipher::decrypt(&hex_encoded_string);
+        let decode_hex = hex::decode(hex_encoded_string).unwrap();
+        let decrypted_string = cipher::decrypt(decode_hex);
         let actual = (
             577,
             String::from("Cooking MC\'s like a pound of bacon"),

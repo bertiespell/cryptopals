@@ -20,6 +20,8 @@ fn main() {
     cipher::cipher::decrypt;
 
     let hex_encoded_string = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    let decrypted_string = decrypt(&hex_encoded_string);
+    let decode_hex = hex::decode(hex_encoded_string).unwrap();
+
+    let decrypted_string = decrypt(decode_hex);
     println!("Decoded string: {:?}", decrypted_string);
 }
