@@ -20,8 +20,16 @@ fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
         .map(|keysize| {
             // For each KEYSIZE, take the first KEYSIZE worth of bytes, and the second KEYSIZE worth of bytes, and find the edit distance between them. Normalize this result by dividing by KEYSIZE.
             let chunked_text = chunk_text_into_bytes(decoded.clone(), keysize);
-            let hamming_dist = calculate_hamming_distance(chunked_text[0].clone(), chunked_text[1].clone());
-            let normalised = hamming_dist / keysize as f32;
+
+            let mut hamming_distance = 0.0;
+            chunked_text.iter().enumerate().for_each(|(index, chunk)| {
+                if index + 1 < chunked_text.len() {
+                    hamming_distance += calculate_hamming_distance(chunk.clone(), chunked_text[index+1].clone());
+                }
+            });
+
+            let normalised = hamming_distance / (keysize as f32  * chunked_text.len() as f32);
+
             (keysize, normalised)
         })
         .collect::<Vec<(i32, f32)>>();
@@ -30,34 +38,27 @@ fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
 
     // The KEYSIZE with the smallest normalized edit distance is probably the key. You could proceed perhaps with the smallest 2-3 KEYSIZE values. Or take 4 KEYSIZE blocks instead of 2 and average the distances
 
-    let decrypted = normalised_keys // TODO: need to figure out why this sizing is wrong (below we use decrypted[17] - should be able to use the first one or two entries here)
+    // Now that you probably know the KEYSIZE: break the ciphertext into blocks of KEYSIZE length.
+    let chunked_text = chunk_text_into_bytes(decoded.clone(), normalised_keys[0].0);
+
+    // Now transpose the blocks: make a block that is the first byte of every block, and a block that is the second byte of every block, and so on.
+
+    let transposed_text = transpose_text(chunked_text);
+
+    // Solve each block as if it was single-character XOR. You already have code to do this.
+
+    let decrypted = transposed_text
         .iter()
-        .map(|probable_key| {
-            // Now that you probably know the KEYSIZE: break the ciphertext into blocks of KEYSIZE length.
-            let chunked_text = chunk_text_into_bytes(decoded.clone(), probable_key.0);
-
-            // Now transpose the blocks: make a block that is the first byte of every block, and a block that is the second byte of every block, and so on.
-
-            let transposed_text = transpose_text(chunked_text);
-
-            // Solve each block as if it was single-character XOR. You already have code to do this.
-
-            transposed_text
-                .iter()
-                .map(|block| {
-                    // For each block, the single-byte XOR key that produces the best looking histogram is the repeating-key XOR key byte for that block. Put them together and you have the key.
-                    decrypt(block.clone())
-                })
-                .map(|histogram| {
-                    histogram.2 as u8
-                })
-                .collect::<Vec<u8>>()
+        .map(|block| {
+            // For each block, the single-byte XOR key that produces the best looking histogram is the repeating-key XOR key byte for that block. Put them together and you have the key.
+            decrypt(block.clone())
         })
-        .collect::<Vec<_>>();
-    
-    let repeating_key = decrypted[17].clone(); // TODO: see todo above
+        .map(|histogram| {
+            histogram.2 as u8
+        })
+        .collect::<Vec<u8>>();
 
-    let decrypted_byte_text = repeating_xor(&decoded, &decrypted[17].clone()); // TODO: implement my own repeating XOR
+    let decrypted_byte_text = repeating_xor(&decoded, &decrypted.clone()); // TODO: implement my own repeating XOR
     let final_text = String::from_utf8(decrypted_byte_text).unwrap();
 
     println!("Final text {:?}", final_text);
