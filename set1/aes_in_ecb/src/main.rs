@@ -39,12 +39,6 @@ fn decrypt_data(data: Vec<u8>) -> Result<Vec<u8>, String> {
     let cipher = Cipher::aes_128_ecb();
     let key = b"YELLOW SUBMARINE";
     let iv = b"ABCDEFGHIJKLMNOP";
-    // let ciphertext = encrypt(
-    //     cipher,
-    //     key,
-    //     Some(iv),
-    //     &data
-    // ).unwrap();
     
     let decrypted_text = decrypt(
         cipher,
