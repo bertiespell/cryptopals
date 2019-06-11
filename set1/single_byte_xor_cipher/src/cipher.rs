@@ -4,19 +4,9 @@ pub mod cipher {
     use std::collections::HashMap;
 
     pub fn decrypt(decoded_hex_string: Vec<u8>) -> (i32, String, char) {
-        // let decoded_hex = hex::decode(hex_string);
-        // match decoded_hex_string {
-           
-                
-                let xored_hashes = xor_against_chars(decoded_hex_string);
+        let xored_hashes = xor_against_chars(decoded_hex_string);
 
-                find_best(xored_hashes)
-            // },
-            // Err(e) => {
-            //     println!("ERROR DECODING HEX {:?}", e);
-            //     Err(String::from("Error decoding hex"))
-            // }
-        // }
+        find_best(xored_hashes)
     }
 
     pub fn find_best(xored_hashes: HashMap<u8, Vec<u8>>) -> (i32, String, char) {

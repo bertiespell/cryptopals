@@ -1,0 +1,9 @@
+[package]
+name = "aes_in_ecb"
+version = "0.1.0"
+authors = ["Bertie <berniesnell@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+decrypt_repeating = { path = "../decrypt_repeating" }
+openssl = { version = "0.10", features = ["vendored"] }
