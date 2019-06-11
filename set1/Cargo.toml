@@ -7,5 +7,6 @@ members = [
     "detect_single_xor",
     "repeating_xor",
     "decrypt_repeating",
-    "aes_in_ecb"
+    "aes_in_ecb",
+    "detect_aes"
 ]

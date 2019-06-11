@@ -43,7 +43,7 @@ pub mod cipher {
         xored_hashes.iter().fold(0, |acc, &entry| acc + score_char(entry as char))
     }
 
-    fn score_char(test_char: char) -> i32 {
+    pub fn score_char(test_char: char) -> i32 {
         match test_char {
             'e' => 27,
             't' => 26,
