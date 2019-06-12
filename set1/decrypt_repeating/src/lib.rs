@@ -7,6 +7,11 @@ use xor::xor as repeating_xor;
 use std::fs;
 use single_byte_xor_cipher::cipher::cipher::decrypt;
 
+struct ScoredKey {
+    keysize: i32,
+    normalised: f32
+}
+
 pub fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
     let mut normalised_keys = (2..40)
         .collect::<Vec<i32>>()
@@ -27,16 +32,16 @@ pub fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
 
             let normalised = hamming_distance / (keysize as f32  * chunked_text.len() as f32);
 
-            (keysize, normalised)
+            ScoredKey { keysize, normalised }
         })
-        .collect::<Vec<(i32, f32)>>();
+        .collect::<Vec<ScoredKey>>();
 
-    normalised_keys.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+    normalised_keys.sort_by(|a, b| a.normalised.partial_cmp(&b.normalised).unwrap());
 
     // The KEYSIZE with the smallest normalized edit distance is probably the key. You could proceed perhaps with the smallest 2-3 KEYSIZE values. Or take 4 KEYSIZE blocks instead of 2 and average the distances
 
     // Now that you probably know the KEYSIZE: break the ciphertext into blocks of KEYSIZE length.
-    let chunked_text = chunk_text_into_bytes(decoded.clone(), normalised_keys[0].0);
+    let chunked_text = chunk_text_into_bytes(decoded.clone(), normalised_keys[0].keysize);
 
     // Now transpose the blocks: make a block that is the first byte of every block, and a block that is the second byte of every block, and so on.
 
