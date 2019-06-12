@@ -16,11 +16,14 @@ pub fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
             let chunked_text = chunk_text_into_bytes(decoded.clone(), keysize);
 
             let mut hamming_distance = 0.0;
-            chunked_text.iter().enumerate().for_each(|(index, chunk)| {
-                if index + 1 < chunked_text.len() {
-                    hamming_distance += calculate_hamming_distance(chunk.clone(), chunked_text[index+1].clone());
-                }
-            });
+            chunked_text
+                .iter()
+                .enumerate()
+                .for_each(|(index, chunk)| {
+                    if index + 1 < chunked_text.len() {
+                        hamming_distance += calculate_hamming_distance(chunk.clone(), chunked_text[index+1].clone());
+                    }
+                });
 
             let normalised = hamming_distance / (keysize as f32  * chunked_text.len() as f32);
 
