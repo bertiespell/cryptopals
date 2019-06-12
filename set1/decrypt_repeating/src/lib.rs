@@ -3,8 +3,6 @@ pub mod base_64;
 extern crate xor;
 
 use xor::xor as repeating_xor;
-
-use std::fs;
 use single_byte_xor_cipher::cipher::cipher::decrypt;
 
 struct ScoredKey {
@@ -56,7 +54,7 @@ pub fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
             decrypt(block.clone())
         })
         .map(|histogram| {
-            histogram.2 as u8
+            histogram.key as u8
         })
         .collect::<Vec<u8>>();
 
@@ -103,6 +101,7 @@ fn transpose_text(text: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
 
     #[test]
     fn test_break_repeating_xor() {
