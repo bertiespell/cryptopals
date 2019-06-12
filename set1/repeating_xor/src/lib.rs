@@ -25,12 +25,14 @@ use hex;
 pub fn repeated_xor<'a>(original_string: &'a str, xor_encryption: &'a str) -> String {
     let bytes_string = original_string.as_bytes().to_vec();
     let mut xor_vec: Vec<u8> = vec!();
-    let repeated_xor_encryption = vec![xor_encryption.as_bytes().to_vec(); original_string.len()];
     while xor_vec.len() < bytes_string.len() {
-        println!("Vec {:?}", xor_vec);
-        xor_encryption.to_owned().into_bytes().into_iter().map(|bytes| xor_vec.push(bytes)).collect::<Vec<_>>();
+        xor_encryption
+            .to_owned()
+            .into_bytes()
+            .into_iter()
+            .for_each(|bytes| xor_vec.push(bytes));
     }
-    if (xor_vec.len() != bytes_string.len()) {
+    if xor_vec.len() != bytes_string.len() {
         xor_vec.resize(bytes_string.len(), b'H');
     }
     let encrypted = single_byte_xor_cipher::xor(bytes_string, xor_vec);

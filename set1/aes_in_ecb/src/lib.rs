@@ -22,7 +22,7 @@
  */
 
 extern crate decrypt_repeating;
-use openssl::symm::{encrypt, decrypt, Cipher};
+use openssl::symm::{decrypt, Cipher};
 
 pub fn decrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String> {
     let cipher = Cipher::aes_128_ecb();
