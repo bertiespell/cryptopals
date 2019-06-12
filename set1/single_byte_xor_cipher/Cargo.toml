@@ -5,6 +5,4 @@ authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-xor = { path = "../xor" }
-convert_hex_to_base64 = { path = "../convert_hex_to_base64" }
 hex = "0.3.2"
