@@ -24,6 +24,20 @@ fn main() {
     println!("Found: {:?}", found);
 }
 
+struct TalliedText<'a> {
+    tally: HashMap<&'a str, i32>,
+    text: String
+}
+
+impl <'a> TalliedText<'a> {
+    fn new_from_string(text: &str) -> TalliedText<'a> {
+        TalliedText {
+            tally: HashMap::new(),
+            text: String::from(text)
+        }
+    }
+}
+
 fn detect_aes(ciphertexts: Vec<&str>) -> String {
         let mut needles = ciphertexts
         .iter()
@@ -32,8 +46,8 @@ fn detect_aes(ciphertexts: Vec<&str>) -> String {
                 .as_bytes()
                 .chunks(16)
                 .map(str::from_utf8)
-                .fold((HashMap::new(), String::from(*text)), |mut acc, chunk| {
-                    let chunk_entry = acc.0
+                .fold(TalliedText::new_from_string(*text), |mut acc, chunk| {
+                    let chunk_entry = acc.tally
                         .entry(chunk.unwrap())
                         .or_insert(0);
                     
@@ -51,9 +65,9 @@ fn detect_aes(ciphertexts: Vec<&str>) -> String {
     }
 
     needles
-        .sort_by(|a, b| b.0.values().fold(0, add_scores_above_1).cmp(&a.0.values().fold(0, add_scores_above_1)));
+        .sort_by(|a, b| b.tally.values().fold(0, add_scores_above_1).cmp(&a.tally.values().fold(0, add_scores_above_1)));
 
-    String::from(needles[0].1.clone())
+    String::from(needles[0].text.clone())
 }
 
 
