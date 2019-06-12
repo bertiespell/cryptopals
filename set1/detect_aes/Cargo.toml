@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 hex = "0.3.2"
+aes_in_ecb = { path = "../aes_in_ecb" }
+single_byte_xor_cipher = { path = "../single_byte_xor_cipher" }
