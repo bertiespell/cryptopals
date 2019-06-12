@@ -1,7 +1,5 @@
-extern crate single_byte_xor_cipher;
 use hex;
-use single_byte_xor_cipher::cipher::cipher::decrypt;
-use single_byte_xor_cipher::cipher::cipher::score_xored_hashes;
+use single_byte_xor_cipher;
 
 pub struct ScoredXorStrings {
     pub score: i32,
@@ -20,9 +18,9 @@ impl ScoredXorStrings {
 pub fn detect_single_xor(data: String) -> ScoredXorStrings {
     data
         .lines()
-        .map(|line| decrypt(hex::decode(line).unwrap()))
+        .map(|line| single_byte_xor_cipher::decrypt(hex::decode(line).unwrap()))
         .fold(ScoredXorStrings::new(), |acc, decrypted_line| {
-            let score = score_xored_hashes(decrypted_line.decoded.as_bytes().to_vec());
+            let score = single_byte_xor_cipher::score_xored_hashes(decrypted_line.decoded.as_bytes().to_vec());
             if score > acc.score {
                 return ScoredXorStrings {
                     score,

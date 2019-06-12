@@ -1,9 +1,6 @@
-extern crate single_byte_xor_cipher;
 pub mod base_64;
-extern crate xor;
-
 use xor::xor as repeating_xor;
-use single_byte_xor_cipher::cipher::cipher::decrypt;
+use single_byte_xor_cipher;
 
 struct ScoredKey {
     keysize: i32,
@@ -51,7 +48,7 @@ pub fn decrypt_repeating_xor(decoded: Vec<u8>) -> String {
         .iter()
         .map(|block| {
             // For each block, the single-byte XOR key that produces the best looking histogram is the repeating-key XOR key byte for that block. Put them together and you have the key.
-            decrypt(block.clone())
+            single_byte_xor_cipher::decrypt(block.clone())
         })
         .map(|histogram| {
             histogram.key as u8
