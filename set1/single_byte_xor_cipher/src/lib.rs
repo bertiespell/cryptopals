@@ -23,5 +23,5 @@ fn main() {
     let decode_hex = hex::decode(hex_encoded_string).unwrap();
 
     let decrypted_string = decrypt(decode_hex);
-    println!("Decoded string: {:?}", decrypted_string);
+    println!("Decoded string: {:?}", decrypted_string.decoded);
 }

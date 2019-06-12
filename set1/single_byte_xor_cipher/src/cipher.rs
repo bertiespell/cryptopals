@@ -1,20 +1,41 @@
 extern crate hex;
 
+pub struct DecodedResult {
+    pub score: i32,
+    pub decoded: String,
+    pub key: char,
+}
+
+impl DecodedResult {
+    fn new_from_defaults() -> DecodedResult {
+        DecodedResult {
+            score: 0, 
+            decoded: String::new(), 
+            key: 'a'
+        }
+    }
+}
+
 pub mod cipher {
     use std::collections::HashMap;
+    use super::*;
 
-    pub fn decrypt(decoded_hex_string: Vec<u8>) -> (i32, String, char) {
+    pub fn decrypt(decoded_hex_string: Vec<u8>) -> DecodedResult {
         let xored_hashes = xor_against_chars(decoded_hex_string);
 
         find_best(xored_hashes)
     }
 
-    pub fn find_best(xored_hashes: HashMap<u8, Vec<u8>>) -> (i32, String, char) {
-        xored_hashes.iter().fold((0, String::new(), 'a'), |acc, hash| {
+    pub fn find_best(xored_hashes: HashMap<u8, Vec<u8>>) -> DecodedResult {
+        xored_hashes.iter().fold(DecodedResult::new_from_defaults(), |acc, hash| {
             let decoded_string = String::from_utf8(hash.1.clone()).unwrap_or(String::from("a"));
             let score = score_xored_hashes(decoded_string.as_bytes().to_vec());
-            if score > acc.0 {
-                return (score, decoded_string, *hash.0 as char);
+            if score > acc.score {
+                return DecodedResult {
+                    score, 
+                    decoded: decoded_string,
+                    key: *hash.0 as char
+                };
             }
             acc
         })
@@ -86,13 +107,15 @@ mod tests {
         let hex_encoded_string = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
         let decode_hex = hex::decode(hex_encoded_string).unwrap();
         let decrypted_string = cipher::decrypt(decode_hex);
-        let actual = (
-            577,
-            String::from("Cooking MC\'s like a pound of bacon"),
-            'X'
-        );
+        let actual = DecodedResult {
+            score: 577,
+            decoded: String::from("Cooking MC\'s like a pound of bacon"),
+            key: 'X'
+        };
 
-        assert_eq!(decrypted_string, actual);
+        assert_eq!(decrypted_string.score, actual.score);
+        assert_eq!(decrypted_string.decoded, actual.decoded);
+        assert_eq!(decrypted_string.key, actual.key);
     }
 }
 
