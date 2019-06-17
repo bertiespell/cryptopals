@@ -10,5 +10,5 @@ members = [
     "set1/aes_in_ecb",
     "set1/detect_aes",
     "set2/pkcs_padding",
-    "set2/cbc_mode
+    "set2/cbc_mode"
 ]
