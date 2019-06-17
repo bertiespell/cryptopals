@@ -26,11 +26,12 @@ pub fn decrypt(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<u8> {
 
     encrypted_text
         .chunks(key.len()) // each block should be the length of the key
-        .enumerate()
-        .for_each(|(index, entry)| {
-            let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len());
-            dbg!(padded_entry);
-            // last_block = entry;
+        .for_each(|entry| {
+            let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len()); // these are all now the length of the key
+            // decrypt block
+            // xor against last_block
+            // update last block (last_block = entry;)
+            dbg!(padded_entry.len());
         })
     ;
     vec!()
