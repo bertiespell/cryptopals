@@ -22,7 +22,7 @@
  */
 
 extern crate decrypt_repeating;
-use openssl::symm::{decrypt, Cipher};
+use openssl::symm::{ encrypt, decrypt, Cipher};
 
 pub fn decrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String> {
     let cipher = Cipher::aes_128_ecb();
@@ -37,6 +37,22 @@ pub fn decrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String> {
     match decrypted_text {
         Ok(text) => Ok(text),
         Err(_) => Err(String::from("Error decrypting text")),
+    }
+}
+
+pub fn encrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String>  {
+    let cipher = Cipher::aes_128_ecb();
+    let iv = b"ABCDEFGHIJKLMNOP";
+    
+    let decrypted_text = encrypt(
+        cipher,
+        key,
+        Some(iv),
+        &data
+    );
+    match decrypted_text {
+        Ok(text) => Ok(text),
+        Err(_) => Err(String::from("Error encrypting text")),
     }
 }
 
@@ -57,5 +73,17 @@ mod tests {
 
         let actual = fs::read_to_string("decrypted.txt").expect("Unable to read file");
         assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_encryption() {
+        let encypted_text_original = fs::read_to_string("text.txt").expect("Unable to read file").replace("\n", "");
+        let un_encrypted_text = fs::read_to_string("decrypted.txt").expect("Unable to read file");
+        let key = b"YELLOW SUBMARINE";
+        let encrypted = encrypt_data(un_encrypted_text.as_bytes().to_owned(), key);
+        let base_64_encoded = base_64::encode(&encrypted.unwrap());
+        let result = String::from_utf8(base_64_encoded).unwrap();
+
+        assert_eq!(result, encypted_text_original);
     }
 }
