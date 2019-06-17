@@ -24,14 +24,13 @@
 extern crate decrypt_repeating;
 use openssl::symm::{ encrypt, decrypt, Cipher};
 
-pub fn decrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String> {
+pub fn decrypt_data(data: Vec<u8>, key: &[u8], iv: Vec<u8>) -> Result<Vec<u8>, String> {
     let cipher = Cipher::aes_128_ecb();
-    let iv = b"ABCDEFGHIJKLMNOP";
     
     let decrypted_text = decrypt(
         cipher,
         key,
-        Some(iv),
+        Some(&iv),
         &data
     );
     match decrypted_text {
@@ -40,14 +39,13 @@ pub fn decrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String> {
     }
 }
 
-pub fn encrypt_data(data: Vec<u8>, key: &[u8]) -> Result<Vec<u8>, String>  {
+pub fn encrypt_data(data: Vec<u8>, key: &[u8], iv: Vec<u8>) -> Result<Vec<u8>, String>  {
     let cipher = Cipher::aes_128_ecb();
-    let iv = b"ABCDEFGHIJKLMNOP";
     
     let decrypted_text = encrypt(
         cipher,
         key,
-        Some(iv),
+        Some(&iv),
         &data
     );
     match decrypted_text {
@@ -66,9 +64,10 @@ mod tests {
     #[test]
     fn test_decryption() {
         let text = fs::read_to_string("text.txt").expect("Unable to read file");
+        let iv = b"ABCDEFGHIJKLMNOP";
         let text_bytes = base_64::decode(text.as_bytes());
         let key = b"YELLOW SUBMARINE";
-        let decrypted = decrypt_data(text_bytes, key);
+        let decrypted = decrypt_data(text_bytes, key, iv.to_vec());
         let result = String::from_utf8(decrypted.unwrap()).unwrap();
 
         let actual = fs::read_to_string("decrypted.txt").expect("Unable to read file");
@@ -80,7 +79,8 @@ mod tests {
         let encypted_text_original = fs::read_to_string("text.txt").expect("Unable to read file").replace("\n", "");
         let un_encrypted_text = fs::read_to_string("decrypted.txt").expect("Unable to read file");
         let key = b"YELLOW SUBMARINE";
-        let encrypted = encrypt_data(un_encrypted_text.as_bytes().to_owned(), key);
+        let iv = b"ABCDEFGHIJKLMNOP";
+        let encrypted = encrypt_data(un_encrypted_text.as_bytes().to_owned(), key, iv.to_vec());
         let base_64_encoded = base_64::encode(&encrypted.unwrap());
         let result = String::from_utf8(base_64_encoded).unwrap();
 
