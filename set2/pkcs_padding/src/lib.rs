@@ -12,14 +12,14 @@ So: pad any block to a specific block length, by appending the number of bytes o
 "YELLOW SUBMARINE\x04\x04\x04\x04"
 */
 
-pub fn pad_to(block: &str, proposed_block_length: usize) -> String {
+pub fn pad_to_str(block: &str, proposed_block_length: usize) -> String {
     let block_length = block.as_bytes().len();
     pad_to_bytes(block.as_bytes().to_owned(), proposed_block_length)
 }
 
 pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> String {
     let block_length = block.len();
-    assert!(proposed_block_length > block_length);
+    assert!(proposed_block_length >= block_length);
     let v = proposed_block_length - block_length;
     let mut padded_string = block.clone();
     while (padded_string.len()) < proposed_block_length {
@@ -28,12 +28,15 @@ pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> String {
     String::from_utf8(padded_string).unwrap()
 }
 
-pub fn pad_with(block: &str, proposed_block_length: usize, pad_with: u8) -> String {
-    let block_length = block.as_bytes().len();
-    assert!(proposed_block_length > block_length);
-    let mut padded_string = String::from(block).as_bytes().to_owned();
+pub fn pad_with_str(block: &str, proposed_block_length: usize, pad_with: u8) -> String {
+    pad_with_bytes(block.as_bytes().to_owned(), proposed_block_length, pad_with)
+}
+
+pub fn pad_with_bytes(block: Vec<u8>, proposed_block_length: usize, pad_with: u8) -> String {
+    assert!(proposed_block_length >= block.len());
+    let mut padded_string = block.clone();
     while (padded_string.len()) < proposed_block_length {
-        padded_string.push(pad_with as u8); 
+        padded_string.push(pad_with); 
     }
     String::from_utf8(padded_string).unwrap()
 }
@@ -42,10 +45,26 @@ pub fn pad_with(block: &str, proposed_block_length: usize, pad_with: u8) -> Stri
 mod tests {
     use super::*;
     #[test]
-    fn test_padding() {
+    fn test_padding_string() {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
-        let result = pad_to(&unpadded, 20);
+        let result = pad_to_str(&unpadded, 20);
+        assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_padding_with() {
+        let unpadded = "YELLOW SUBMARINE";
+        let actual = "YELLOW SUBMARINE\x00\x00\x00\x00\x00";
+        let result = pad_with_str(&unpadded, 21, 0 as u8);
+        assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_padding_with_bytes() {
+        let unpadded = "YELLOW SUBMARINE";
+        let actual = "YELLOW SUBMARINE\x00\x00\x00\x00\x00";
+        let result = pad_with_bytes(unpadded.as_bytes().to_owned(), 21, 0 as u8);
         assert_eq!(result, actual);
     }
 
@@ -56,5 +75,7 @@ mod tests {
         let result = pad_to_bytes(unpadded.as_bytes().to_owned(), 20);
         assert_eq!(result, actual);
     }
+
+
 }
 
