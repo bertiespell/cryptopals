@@ -12,10 +12,26 @@ So: pad any block to a specific block length, by appending the number of bytes o
 "YELLOW SUBMARINE\x04\x04\x04\x04"
 */
 fn main() {
-    println!("Hello, world!");
+    let unpadded = "YELLOW SUBMARINE";
+    // let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
+    let result = pad_to(&unpadded, 20);
+    println!("Found result: {}", result);
 }
 
-fn pad_to(block: &str, block_length: i32) {
+fn pad_to(block: &str, block_length: i32) -> &str {
+    // block.as_bytes()
+    block
+}
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_padding() {
+        let unpadded = "YELLOW SUBMARINE";
+        let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
+        let result = pad_to(&unpadded, 20);
+        assert_eq!(result, actual);
+    }
 }
 
