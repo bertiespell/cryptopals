@@ -14,22 +14,18 @@ So: pad any block to a specific block length, by appending the number of bytes o
 
 pub fn pad_to_str(block: &str, proposed_block_length: usize) -> String {
     let block_length = block.as_bytes().len();
-    pad_to_bytes(block.as_bytes().to_owned(), proposed_block_length)
+    let padded = pad_to_bytes(block.as_bytes().to_owned(), proposed_block_length);
+    String::from_utf8(padded).unwrap()
 }
 
-pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> String {
-    let block_length = block.len();
-    assert!(proposed_block_length >= block_length);
-    let v = proposed_block_length - block_length;
-    let mut padded_string = block.clone();
-    while (padded_string.len()) < proposed_block_length {
-        padded_string.push(v as u8); // coercion here is very useful!
-    }
-    String::from_utf8(padded_string).unwrap()
+pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> Vec<u8> {
+    let v = proposed_block_length - block.len();
+    pad_with_bytes(block, proposed_block_length, v as u8)
 }
 
-pub fn pad_with_str(block: &str, proposed_block_length: usize, pad_with: u8) -> Vec<u8>  {
-    pad_with_bytes(block.as_bytes().to_owned(), proposed_block_length, pad_with)
+pub fn pad_with_str(block: &str, proposed_block_length: usize, pad_with: u8) -> String  {
+    let padded = pad_with_bytes(block.as_bytes().to_owned(), proposed_block_length, pad_with);
+    String::from_utf8(padded).unwrap()
 }
 
 pub fn pad_with_bytes(block: Vec<u8>, proposed_block_length: usize, pad_with: u8) -> Vec<u8> {
@@ -56,8 +52,7 @@ mod tests {
     fn test_padding_with() {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x00\x00\x00\x00\x00";
-        let padded = pad_with_str(&unpadded, 21, 0 as u8);
-        let result = String::from_utf8(padded).unwrap();
+        let result = pad_with_str(&unpadded, 21, 0 as u8);
         assert_eq!(result, actual);
     }
 
@@ -74,7 +69,8 @@ mod tests {
     fn text_byte_padding() {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
-        let result = pad_to_bytes(unpadded.as_bytes().to_owned(), 20);
+        let padded = pad_to_bytes(unpadded.as_bytes().to_owned(), 20);
+        let result = String::from_utf8(padded).unwrap();
         assert_eq!(result, actual);
     }
 
