@@ -18,9 +18,15 @@ fn main() {
     println!("Found result: {}", result);
 }
 
-fn pad_to(block: &str, block_length: i32) -> &str {
-    // block.as_bytes()
-    block
+fn pad_to(block: &str, proposed_block_length: usize) -> String {
+    let block_length = block.as_bytes().len();
+    assert!(proposed_block_length > block_length);
+    let v = proposed_block_length - block_length;
+    let mut padded_string = String::from(block).as_bytes().to_owned();
+    while (padded_string.len()) < proposed_block_length {
+        padded_string.push(v as u8); // coercion here is very useful!
+    }
+    String::from_utf8(padded_string).unwrap()
 }
 
 #[cfg(test)]
