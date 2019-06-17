@@ -1,0 +1,13 @@
+[workspace]
+
+members = [
+    "set1/convert_hex_to_base64",
+    "set1/xor",
+    "set1/single_byte_xor_cipher",
+    "set1/detect_single_xor",
+    "set1/repeating_xor",
+    "set1/decrypt_repeating",
+    "set1/aes_in_ecb",
+    "set1/detect_aes",
+    "set2/pkcs_padding"
+]
