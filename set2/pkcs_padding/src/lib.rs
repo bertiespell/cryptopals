@@ -23,6 +23,16 @@ pub fn pad_to(block: &str, proposed_block_length: usize) -> String {
     String::from_utf8(padded_string).unwrap()
 }
 
+pub fn pad_with(block: &str, proposed_block_length: usize, pad_with: u8) -> String {
+    let block_length = block.as_bytes().len();
+    assert!(proposed_block_length > block_length);
+    let mut padded_string = String::from(block).as_bytes().to_owned();
+    while (padded_string.len()) < proposed_block_length {
+        padded_string.push(pad_with as u8); 
+    }
+    String::from_utf8(padded_string).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
