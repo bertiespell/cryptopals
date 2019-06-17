@@ -1,5 +1,5 @@
 /**
- * Implement CBC mode
+Implement CBC mode
 CBC mode is a block cipher mode that allows us to encrypt irregularly-sized messages, despite the fact that a block cipher natively only transforms individual blocks.
 
 In CBC mode, each ciphertext block is added to the next plaintext block before the next call to the cipher core.
@@ -14,14 +14,26 @@ Don't cheat.
 Do not use OpenSSL's CBC code to do CBC mode, even to verify your results. What's the point of even doing this stuff if you aren't going to learn from it?
  */
 use std::fs;
+use pkcs_padding;
 
-pub fn decrypt() -> String {
+pub fn decrypt(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<u8> {
     // Implement CBC mode by hand by taking the ECB function you wrote earlier, making it encrypt instead of decrypt (verify this by decrypting whatever you encrypt to test), and using your XOR function from the previous exercise to combine them.
 
     // Decrypt first block
     // XOR this block against IV
     // Decrypt next block (XOR with previous ciphertext)
-    String::new()
+    let mut last_block = IV;
+
+    encrypted_text
+        .chunks(key.len()) // each block should be the length of the key
+        .enumerate()
+        .for_each(|(index, entry)| {
+            let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len());
+            dbg!(padded_entry);
+            // last_block = entry;
+        })
+    ;
+    vec!()
 }
 
 #[cfg(test)]
