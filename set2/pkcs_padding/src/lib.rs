@@ -23,6 +23,17 @@ pub fn pad_to(block: &str, proposed_block_length: usize) -> String {
     String::from_utf8(padded_string).unwrap()
 }
 
+pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> String {
+    let block_length = block.len();
+    assert!(proposed_block_length > block_length);
+    let v = proposed_block_length - block_length;
+    let mut padded_string = block.clone();
+    while (padded_string.len()) < proposed_block_length {
+        padded_string.push(v as u8); // coercion here is very useful!
+    }
+    String::from_utf8(padded_string).unwrap()
+}
+
 pub fn pad_with(block: &str, proposed_block_length: usize, pad_with: u8) -> String {
     let block_length = block.as_bytes().len();
     assert!(proposed_block_length > block_length);
@@ -41,6 +52,14 @@ mod tests {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
         let result = pad_to(&unpadded, 20);
+        assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn text_byte_padding() {
+        let unpadded = "YELLOW SUBMARINE";
+        let actual = "YELLOW SUBMARINE\x04\x04\x04\x04";
+        let result = pad_to_bytes(unpadded.as_bytes().to_owned(), 20);
         assert_eq!(result, actual);
     }
 }
