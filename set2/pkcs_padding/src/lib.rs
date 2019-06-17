@@ -28,17 +28,17 @@ pub fn pad_to_bytes(block: Vec<u8>, proposed_block_length: usize) -> String {
     String::from_utf8(padded_string).unwrap()
 }
 
-pub fn pad_with_str(block: &str, proposed_block_length: usize, pad_with: u8) -> String {
+pub fn pad_with_str(block: &str, proposed_block_length: usize, pad_with: u8) -> Vec<u8>  {
     pad_with_bytes(block.as_bytes().to_owned(), proposed_block_length, pad_with)
 }
 
-pub fn pad_with_bytes(block: Vec<u8>, proposed_block_length: usize, pad_with: u8) -> String {
+pub fn pad_with_bytes(block: Vec<u8>, proposed_block_length: usize, pad_with: u8) -> Vec<u8> {
     assert!(proposed_block_length >= block.len());
-    let mut padded_string = block.clone();
-    while (padded_string.len()) < proposed_block_length {
-        padded_string.push(pad_with); 
+    let mut padded = block.clone();
+    while (padded.len()) < proposed_block_length {
+        padded.push(pad_with); 
     }
-    String::from_utf8(padded_string).unwrap()
+    padded
 }
 
 #[cfg(test)]
@@ -56,7 +56,8 @@ mod tests {
     fn test_padding_with() {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x00\x00\x00\x00\x00";
-        let result = pad_with_str(&unpadded, 21, 0 as u8);
+        let padded = pad_with_str(&unpadded, 21, 0 as u8);
+        let result = String::from_utf8(padded).unwrap();
         assert_eq!(result, actual);
     }
 
@@ -64,7 +65,8 @@ mod tests {
     fn test_padding_with_bytes() {
         let unpadded = "YELLOW SUBMARINE";
         let actual = "YELLOW SUBMARINE\x00\x00\x00\x00\x00";
-        let result = pad_with_bytes(unpadded.as_bytes().to_owned(), 21, 0 as u8);
+        let padded = pad_with_bytes(unpadded.as_bytes().to_owned(), 21, 0 as u8);
+        let result = String::from_utf8(padded).unwrap();
         assert_eq!(result, actual);
     }
 
