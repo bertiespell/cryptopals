@@ -5,3 +5,4 @@ authors = ["Bertie <berniesnell@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+pkcs_padding = { path = "../pkcs_padding" }
