@@ -74,8 +74,17 @@ mod tests {
     use std::fs;
 
     #[test]
-    fn test() {
+    fn test_decryption() {
         let encypted_text = fs::read_to_string("encrypted_data.txt").expect("Unable to read file");
+        let key = "YELLOW SUBMARINE";
+        let iv =  "\x00\x00\x00";
+        let actual = fs::read_to_string("decrypted_data.txt").expect("Unable to read file");
+        let decrypted_text = decrypt_string(
+            &encypted_text, 
+            key, 
+            iv
+        );
 
+        assert_eq!(actual, decrypted_text);
     }
 }

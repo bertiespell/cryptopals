@@ -9,5 +9,5 @@ fn main() {
         key, 
         iv
     );
-    println!("decrypted_text: {:?}", decrypted_text);
+    println!("Decrypted_text: {:?}", decrypted_text);
 }
