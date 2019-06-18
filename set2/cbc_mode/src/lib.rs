@@ -36,15 +36,10 @@ pub fn decrypt_string(encrypted_text: &str, key: &str, iv: &str) -> String {
 }
 
 pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, iv: Vec<u8>) -> Vec<Vec<u8>> {
-    // Implement CBC mode by hand by taking the ECB function you wrote earlier, making it encrypt instead of decrypt (verify this by decrypting whatever you encrypt to test), and using your XOR function from the previous exercise to combine them.
-
-    // Decrypt first block
-    // XOR this block against iv
-    // Decrypt next block (XOR with previous ciphertext)
     let mut last_block = iv;
 
     let base_64_decoded = base_64::decode(&encrypted_text);
-    let mut string_result = String::new();
+
     let mut decrypted: Vec<Vec<u8>> = vec!();
 
     base_64_decoded
@@ -62,22 +57,15 @@ pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, iv: Vec<u8>) -> Vec<
                 decrypted_block.clone()[0..16].to_vec(), 
                 last_block.clone()
             );
-            let my_string = String::from_utf8(xor_result.clone()).unwrap();
-            string_result.push_str(&my_string);
             decrypted.push(xor_result.clone());
-            // update last block (last_block = entry;)
+
             last_block = entry.to_vec();
         })
     ;
-    println!("{}", string_result);
 
     decrypted
         .into_iter()
-        // .flatten()
         .collect::<Vec<Vec<u8>>>()
-
-
-    // vec!()
 }
 
 #[cfg(test)]
