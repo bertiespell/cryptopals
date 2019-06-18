@@ -6,3 +6,6 @@ edition = "2018"
 
 [dependencies]
 pkcs_padding = { path = "../pkcs_padding" }
+aes_in_ecb = { path = "../../set1/aes_in_ecb" }
+single_byte_xor_cipher = { path = "../../set1/single_byte_xor_cipher" }
+decrypt_repeating = { path = "../../set1/decrypt_repeating" }
