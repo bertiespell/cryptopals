@@ -18,7 +18,24 @@ use aes_in_ecb;
 use single_byte_xor_cipher;
 use decrypt_repeating::base_64;
 
-pub fn decrypt(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<u8> {
+pub fn decrypt_string(encrypted_text: &str, key: &str, IV: &str) -> String {
+
+    let IV_lengthened = pkcs_padding::pad_with_bytes(IV.as_bytes().to_owned(), key.as_bytes().len(), 0 as u8);
+    let decrypted_bytes = decrypt_bytes(
+        encrypted_text.as_bytes().to_owned(), 
+        key.as_bytes().to_owned(), 
+        IV_lengthened
+    );
+
+    decrypted_bytes
+        .iter()
+        .fold(String::new(), |mut acc, entry| {
+            acc.push_str(&String::from_utf8(entry.clone()).unwrap());
+            acc
+        })
+}
+
+pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<Vec<u8>> {
     // Implement CBC mode by hand by taking the ECB function you wrote earlier, making it encrypt instead of decrypt (verify this by decrypting whatever you encrypt to test), and using your XOR function from the previous exercise to combine them.
 
     // Decrypt first block
@@ -28,37 +45,40 @@ pub fn decrypt(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<u8> {
 
     let base_64_decoded = base_64::decode(&encrypted_text);
     let mut string_result = String::new();
+    let mut decrypted: Vec<Vec<u8>> = vec!();
 
     base_64_decoded
         .chunks(key.len()) // each block should be the length of the key
         .enumerate()
         .for_each(|(index, entry)| {
-            // if index == 0 {
-                let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len()); // these are all now the length of the key
-                // decrypt block
-                // xor against last_block
+            let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len()); // these are all now the length of the key
 
-                let decrypted_block = aes_in_ecb::decrypt_data(
-                    padded_entry, 
-                    &key, 
-                    last_block.clone()
-                ).unwrap();
+            let decrypted_block = aes_in_ecb::decrypt_data(
+                padded_entry, 
+                &key, 
+                last_block.clone()
+            ).unwrap();
 
-                let xor_result = single_byte_xor_cipher::xor(
-                    decrypted_block.clone()[0..16].to_vec(), 
-                    last_block.clone()
-                );
-                let my_string = String::from_utf8(xor_result).unwrap();
-                string_result.push_str(&my_string);
-                // update last block (last_block = entry;)
-                last_block = entry.to_vec();
-            // }
+            let xor_result = single_byte_xor_cipher::xor(
+                decrypted_block.clone()[0..16].to_vec(), 
+                last_block.clone()
+            );
+            let my_string = String::from_utf8(xor_result.clone()).unwrap();
+            string_result.push_str(&my_string);
+            decrypted.push(xor_result.clone());
+            // update last block (last_block = entry;)
+            last_block = entry.to_vec();
         })
     ;
+    println!("{}", string_result);
 
-                    println!("{}", string_result);
+    decrypted
+        .into_iter()
+        // .flatten()
+        .collect::<Vec<Vec<u8>>>()
 
-    vec!()
+
+    // vec!()
 }
 
 #[cfg(test)]
