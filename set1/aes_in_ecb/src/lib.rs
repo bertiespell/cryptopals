@@ -22,20 +22,24 @@
  */
 
 extern crate decrypt_repeating;
-use openssl::symm::{ encrypt, decrypt, Cipher};
+use openssl::symm::{ encrypt, Cipher, Crypter, Mode};
 
 pub fn decrypt_data(data: Vec<u8>, key: &[u8], iv: Vec<u8>) -> Result<Vec<u8>, String> {
     let cipher = Cipher::aes_128_ecb();
-    
-    let decrypted_text = decrypt(
+
+    let mut decryted = Crypter::new(
         cipher,
+        Mode::Decrypt,
         key,
         Some(&iv),
-        &data
-    );
-    match decrypted_text {
-        Ok(text) => Ok(text),
-        Err(_) => Err(String::from("Error decrypting text")),
+    ).unwrap();
+
+    let mut output = vec![0 as u8; data.len() + Cipher::aes_128_cbc().block_size()];
+    let decrypted_result = decryted.update(&data, &mut output);
+
+    match decrypted_result {
+        Ok(_) => Ok(output),
+        Err(e) => Err(format!("Error decrypting text: {}", e)),
     }
 }
 
