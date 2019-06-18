@@ -18,13 +18,13 @@ use aes_in_ecb;
 use single_byte_xor_cipher;
 use decrypt_repeating::base_64;
 
-pub fn decrypt_string(encrypted_text: &str, key: &str, IV: &str) -> String {
+pub fn decrypt_string(encrypted_text: &str, key: &str, iv: &str) -> String {
 
-    let IV_lengthened = pkcs_padding::pad_with_bytes(IV.as_bytes().to_owned(), key.as_bytes().len(), 0 as u8);
+    let iv_lengthened = pkcs_padding::pad_with_bytes(iv.as_bytes().to_owned(), key.as_bytes().len(), 0 as u8);
     let decrypted_bytes = decrypt_bytes(
         encrypted_text.as_bytes().to_owned(), 
         key.as_bytes().to_owned(), 
-        IV_lengthened
+        iv_lengthened
     );
 
     decrypted_bytes
@@ -35,13 +35,13 @@ pub fn decrypt_string(encrypted_text: &str, key: &str, IV: &str) -> String {
         })
 }
 
-pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<Vec<u8>> {
+pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, iv: Vec<u8>) -> Vec<Vec<u8>> {
     // Implement CBC mode by hand by taking the ECB function you wrote earlier, making it encrypt instead of decrypt (verify this by decrypting whatever you encrypt to test), and using your XOR function from the previous exercise to combine them.
 
     // Decrypt first block
-    // XOR this block against IV
+    // XOR this block against iv
     // Decrypt next block (XOR with previous ciphertext)
-    let mut last_block = IV;
+    let mut last_block = iv;
 
     let base_64_decoded = base_64::decode(&encrypted_text);
     let mut string_result = String::new();
@@ -49,8 +49,7 @@ pub fn decrypt_bytes(encrypted_text: Vec<u8>, key: Vec<u8>, IV: Vec<u8>) -> Vec<
 
     base_64_decoded
         .chunks(key.len()) // each block should be the length of the key
-        .enumerate()
-        .for_each(|(index, entry)| {
+        .for_each(|entry| {
             let padded_entry = pkcs_padding::pad_to_bytes(entry.to_vec(), key.len()); // these are all now the length of the key
 
             let decrypted_block = aes_in_ecb::decrypt_data(
